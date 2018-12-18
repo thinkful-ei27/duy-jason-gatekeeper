@@ -2,7 +2,6 @@ const express = require('express');
 // you'll need to use `queryString` in your `gateKeeper` middleware function
 const queryString = require('query-string');
 
-
 const app = express();
 
 // For this challenge, we're hard coding a list of users, because
@@ -65,11 +64,20 @@ const USERS = [
 //     (aka, `req.user = matchedUser`)
 function gateKeeper(req, res, next) {
   // your code should replace the line below
+  const credentials = req.get('x-username-and-password')
+const credObj = queryString.parse(credentials);
+console.log(credObj);
+const userFind = USERS.find(function(user){
+    if (this.userName === credObj.user && this.password === credObj.pass){
+        return true;
+    });
+    };
+    console.log(userFind);
   next();
 }
 
 // Add the middleware to your app!
-
+app.use(gateKeeper);
 // this endpoint returns a json object representing the user making the request,
 // IF they supply valid user credentials. This endpoint assumes that `gateKeeper` 
 // adds the user object to the request if valid credentials were supplied.
@@ -85,6 +93,6 @@ app.get("/api/users/me", (req, res) => {
   return res.json({firstName, lastName, id, userName, position});
 });
 
-app.listen(process.env.PORT, () => {
-  console.log(`Your app is listening on port ${process.env.PORT}`);
+app.listen(8080, () => {
+  console.log(`Your app is listening on port 8080`);
 });
